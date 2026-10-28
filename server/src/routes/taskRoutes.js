@@ -3,7 +3,6 @@ import express from "express";
 import { crmTasks } from "./crmRoutes.js";
 import { helpdeskTickets } from "./helpdeskRoutes.js";
 import { normalizeCrmTask, normalizeHelpdeskTicket, calculatePriority } from "../services/prioritizer.js";
-import { chaosService } from "../services/chaosService.js";
 
 const router = express.Router();
 
@@ -12,9 +11,7 @@ const router = express.Router();
  * Unified aggregator endpoint fetching from both CRM & Helpdesk
  * Normalizes schemas, calculates priority, and applies filters
  */
-router.get("/tasks", async (req, res) => {
-  await chaosService.applyLatency();
-
+router.get("/tasks", (req, res) => {
   const serviceHealth = {
     crm: { healthy: true, error: null, count: 0 },
     helpdesk: { healthy: true, error: null, count: 0 }
@@ -23,9 +20,8 @@ router.get("/tasks", async (req, res) => {
   let rawCrmList = [];
   let rawHelpdeskList = [];
 
-  // Attempt to fetch from CRM mock source
+  // Ingest from CRM mock source
   try {
-    chaosService.checkCrmFailure();
     rawCrmList = [...crmTasks];
     serviceHealth.crm.count = rawCrmList.length;
   } catch (err) {
@@ -33,9 +29,8 @@ router.get("/tasks", async (req, res) => {
     serviceHealth.crm.error = err.message || "CRM service unavailable";
   }
 
-  // Attempt to fetch from Helpdesk mock source
+  // Ingest from Helpdesk mock source
   try {
-    chaosService.checkHelpdeskFailure();
     rawHelpdeskList = [...helpdeskTickets];
     serviceHealth.helpdesk.count = rawHelpdeskList.length;
   } catch (err) {
@@ -47,7 +42,7 @@ router.get("/tasks", async (req, res) => {
   if (!serviceHealth.crm.healthy && !serviceHealth.helpdesk.healthy) {
     return res.status(503).json({
       success: false,
-      message: "Both upstream REST services (CRM & Helpdesk) are temporarily unavailable.",
+      message: "Upstream services (CRM & Helpdesk) are temporarily unavailable.",
       serviceHealth,
       tasks: []
     });
@@ -63,7 +58,7 @@ router.get("/tasks", async (req, res) => {
   // 3. Prioritize with mathematical engine
   const evaluatedTasks = unifiedTasks.map((task) => calculatePriority(task));
 
-  // 4. Filter by Employee
+  // 4. Apply Filters
   let filtered = evaluatedTasks;
   const { employeeId, status, source, urgency, search, sort } = req.query;
 
@@ -71,22 +66,18 @@ router.get("/tasks", async (req, res) => {
     filtered = filtered.filter((t) => t.assignedTo.id === employeeId);
   }
 
-  // Filter by Status (pending, in_progress, completed, blocked)
   if (status && status !== "all") {
     filtered = filtered.filter((t) => t.status === status);
   }
 
-  // Filter by Source (CRM, Helpdesk)
   if (source && source !== "all") {
     filtered = filtered.filter((t) => t.source.toLowerCase() === source.toLowerCase());
   }
 
-  // Filter by Urgency (critical, high, medium, low)
   if (urgency && urgency !== "all") {
     filtered = filtered.filter((t) => t.urgency.toLowerCase() === urgency.toLowerCase());
   }
 
-  // Free-text Search
   if (search && search.trim() !== "") {
     const q = search.toLowerCase().trim();
     filtered = filtered.filter(
@@ -124,7 +115,7 @@ router.get("/tasks", async (req, res) => {
 
 /**
  * GET /api/employees
- * Aggregated unique list of employees across all systems
+ * Unique list of employees across all systems
  */
 router.get("/employees", (req, res) => {
   const empMap = new Map();
@@ -170,7 +161,7 @@ router.get("/employees", (req, res) => {
 
 /**
  * GET /api/analytics
- * Executive KPI summary for dashboard widgets
+ * KPI summary metrics
  */
 router.get("/analytics", (req, res) => {
   const normCrm = crmTasks.map(normalizeCrmTask);
@@ -187,9 +178,6 @@ router.get("/analytics", (req, res) => {
   const dueToday = allTasks.filter((t) => (t.deadlineStatus === "due_today" || t.deadlineStatus === "due_soon_6h") && t.status !== "completed").length;
   const critical = allTasks.filter((t) => t.urgency === "critical" && t.status !== "completed").length;
 
-  const crmCount = normCrm.length;
-  const helpdeskCount = normHelpdesk.length;
-
   res.json({
     success: true,
     total,
@@ -202,8 +190,8 @@ router.get("/analytics", (req, res) => {
     critical,
     completionRate: total > 0 ? Math.round((completed / total) * 100) : 0,
     sourceBreakdown: {
-      crm: crmCount,
-      helpdesk: helpdeskCount
+      crm: normCrm.length,
+      helpdesk: normHelpdesk.length
     },
     urgencyBreakdown: {
       critical: allTasks.filter((t) => t.urgency === "critical").length,
@@ -216,7 +204,7 @@ router.get("/analytics", (req, res) => {
 
 /**
  * PATCH /api/tasks/:id/status
- * Unified status update routing to CRM or Helpdesk
+ * Unified status update
  */
 router.patch("/tasks/:id/status", (req, res) => {
   const { id } = req.params;
@@ -225,7 +213,6 @@ router.patch("/tasks/:id/status", (req, res) => {
   if (id.startsWith("CRM-")) {
     const idx = crmTasks.findIndex((t) => t.id === id);
     if (idx !== -1) {
-      // Map normalized status back to CRM schema
       let crmStatus = status;
       if (status === "pending") crmStatus = "pending";
       if (status === "in_progress") crmStatus = "in_progress";
@@ -234,7 +221,7 @@ router.patch("/tasks/:id/status", (req, res) => {
 
       crmTasks[idx].status = crmStatus;
       const updated = calculatePriority(normalizeCrmTask(crmTasks[idx]));
-      return res.json({ success: true, message: `CRM task ${id} status updated to ${status}`, task: updated });
+      return res.json({ success: true, message: `CRM task ${id} updated`, task: updated });
     }
   } else if (id.startsWith("HD-")) {
     const idx = helpdeskTickets.findIndex((t) => t.ticketId === id);
@@ -247,28 +234,11 @@ router.patch("/tasks/:id/status", (req, res) => {
 
       helpdeskTickets[idx].ticketStatus = hdStatus;
       const updated = calculatePriority(normalizeHelpdeskTicket(helpdeskTickets[idx]));
-      return res.json({ success: true, message: `Helpdesk ticket ${id} status updated to ${status}`, task: updated });
+      return res.json({ success: true, message: `Helpdesk ticket ${id} updated`, task: updated });
     }
   }
 
-  return res.status(404).json({ success: false, message: `Task ${id} not found in CRM or Helpdesk` });
-});
-
-/**
- * GET & POST /api/chaos
- */
-router.get("/chaos", (req, res) => {
-  res.json({ success: true, config: chaosService.getConfig() });
-});
-
-router.post("/chaos", (req, res) => {
-  const updated = chaosService.updateConfig(req.body);
-  res.json({ success: true, message: "Chaos simulation updated", config: updated });
-});
-
-router.post("/chaos/reset", (req, res) => {
-  const resetConfig = chaosService.reset();
-  res.json({ success: true, message: "Chaos simulation reset to normal", config: resetConfig });
+  return res.status(404).json({ success: false, message: `Task ${id} not found` });
 });
 
 export { router as taskRouter };

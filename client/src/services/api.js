@@ -1,5 +1,4 @@
 // client/src/services/api.js
-// Enterprise resilient API client with graceful error handling and retry support
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -66,31 +65,4 @@ export async function updateTaskStatus(taskId, status) {
     throw new Error(errData.message || `Failed to update status for ${taskId}`);
   }
   return await res.json();
-}
-
-export async function getChaosConfig() {
-  const res = await fetch(`${API_BASE_URL}/chaos`);
-  if (!res.ok) throw new Error("Failed to get chaos config");
-  const data = await res.json();
-  return data.config;
-}
-
-export async function updateChaosConfig(config) {
-  const res = await fetch(`${API_BASE_URL}/chaos`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(config)
-  });
-  if (!res.ok) throw new Error("Failed to update chaos config");
-  const data = await res.json();
-  return data.config;
-}
-
-export async function resetChaosConfig() {
-  const res = await fetch(`${API_BASE_URL}/chaos/reset`, {
-    method: "POST"
-  });
-  if (!res.ok) throw new Error("Failed to reset chaos config");
-  const data = await res.json();
-  return data.config;
 }

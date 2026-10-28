@@ -9,7 +9,7 @@ import {
   HelpCircle, 
   CheckCircle2, 
   AlertTriangle,
-  Code2,
+  FileText,
   Calculator,
   UserCheck
 } from "lucide-react";
@@ -20,7 +20,7 @@ export function TaskDetailModal({
   onOpenSourceApp, 
   onUpdateStatus 
 }) {
-  const [activeTab, setActiveTab] = useState("overview"); // "overview" | "formula" | "raw"
+  const [activeTab, setActiveTab] = useState("overview");
 
   if (!task) return null;
 
@@ -29,21 +29,21 @@ export function TaskDetailModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-xl bg-slate-900 border border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
-        <div className="p-5 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+        <div className="p-4 sm:p-5 bg-slate-950 border-b border-white/[0.08] flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
             <span className="font-mono text-sm font-bold text-indigo-400">
               {task.id}
             </span>
-            <span className="text-slate-500">•</span>
+            <span className="text-slate-600">•</span>
             {task.source === "CRM" ? (
-              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                Zoho CRM
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                CRM
               </span>
             ) : (
-              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
                 Helpdesk
               </span>
             )}
@@ -60,50 +60,39 @@ export function TaskDetailModal({
 
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-slate-800 bg-slate-950/40 px-5 text-xs font-medium">
+        <div className="flex border-b border-white/[0.08] bg-slate-950/60 px-5 text-xs font-medium">
           <button
             onClick={() => setActiveTab("overview")}
             className={`py-2.5 px-3 border-b-2 transition ${
               activeTab === "overview"
-                ? "border-indigo-500 text-indigo-400 font-semibold"
+                ? "border-indigo-500 text-indigo-400 font-bold"
                 : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
-            Overview & Context
+            Task Overview
           </button>
           <button
-            onClick={() => setActiveTab("formula")}
+            onClick={() => setActiveTab("priority")}
             className={`py-2.5 px-3 border-b-2 transition flex items-center space-x-1.5 ${
-              activeTab === "formula"
-                ? "border-indigo-500 text-indigo-400 font-semibold"
+              activeTab === "priority"
+                ? "border-indigo-500 text-indigo-400 font-bold"
                 : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
             <Calculator className="w-3.5 h-3.5" />
-            <span>Priority Score Math</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("raw")}
-            className={`py-2.5 px-3 border-b-2 transition flex items-center space-x-1.5 ${
-              activeTab === "raw"
-                ? "border-indigo-500 text-indigo-400 font-semibold"
-                : "border-transparent text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            <Code2 className="w-3.5 h-3.5" />
-            <span>Normalized JSON</span>
+            <span>Priority Calculation</span>
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-5 text-xs">
+        <div className="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs">
           
           {activeTab === "overview" && (
             <div className="space-y-4">
@@ -111,15 +100,15 @@ export function TaskDetailModal({
                 <h3 className="text-base font-bold text-white mb-1.5 leading-snug">
                   {task.title}
                 </h3>
-                <div className="flex items-center space-x-3 text-slate-400">
-                  <span>Created: {new Date(task.createdAt).toLocaleDateString()}</span>
+                <div className="flex items-center space-x-2 text-slate-400">
+                  <span>Source: {task.sourcePlatform}</span>
                   <span>•</span>
-                  <span>Source Platform: {task.sourcePlatform}</span>
+                  <span>Created: {new Date(task.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
 
-              {/* Status and Assignee Grid */}
-              <div className="grid grid-cols-2 gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800">
+              {/* Assignee & Status */}
+              <div className="grid grid-cols-2 gap-3 p-3 bg-slate-950/70 rounded-xl border border-white/[0.08]">
                 <div>
                   <span className="text-[11px] text-slate-400 block mb-1">Assignee</span>
                   <div className="flex items-center space-x-2">
@@ -140,11 +129,11 @@ export function TaskDetailModal({
                   <select
                     value={task.status}
                     onChange={(e) => onUpdateStatus(task.id, e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-indigo-500 cursor-pointer"
+                    className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-indigo-500 cursor-pointer"
                   >
                     <option value="pending">Pending</option>
                     <option value="in_progress">In Progress</option>
-                    <option value="completed">Resolved / Completed</option>
+                    <option value="completed">Resolved</option>
                     <option value="blocked">Blocked</option>
                   </select>
                 </div>
@@ -154,12 +143,12 @@ export function TaskDetailModal({
               <div className={`p-3 rounded-xl border flex items-center justify-between ${
                 isOverdue
                   ? "bg-rose-950/20 border-rose-500/40 text-rose-300"
-                  : "bg-slate-950/60 border-slate-800 text-slate-300"
+                  : "bg-slate-950/70 border-white/[0.08] text-slate-300"
               }`}>
                 <div className="flex items-center space-x-2">
                   <Clock className="w-4 h-4 text-amber-400" />
                   <div>
-                    <div className="font-semibold">Deadline: {task.timeRemainingFormatted}</div>
+                    <div className="font-bold">Deadline: {task.timeRemainingFormatted}</div>
                     <div className="text-[10px] text-slate-400 font-mono">
                       {new Date(task.deadline).toLocaleString()}
                     </div>
@@ -167,98 +156,102 @@ export function TaskDetailModal({
                 </div>
                 {isOverdue && (
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/30 text-rose-300">
-                    SLA Breached
+                    Overdue
                   </span>
                 )}
               </div>
 
-              {/* Extra Metadata */}
-              <div className="space-y-2">
-                <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                  System Context & Metadata
-                </h4>
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                  {Object.entries(task.metadata || {}).map(([k, v]) => {
-                    if (k === "tags") return null;
-                    return (
-                      <div key={k} className="flex justify-between border-b border-slate-800/60 pb-1 last:border-none">
-                        <span className="capitalize text-slate-400">{k}:</span>
-                        <span className="font-medium text-slate-200 text-right max-w-xs">{String(v)}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+              {/* Context & Metadata */}
+              <div className="bg-slate-950/70 p-3 rounded-xl border border-white/[0.08] space-y-2">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  Details
+                </span>
+                {task.metadata?.customer && (
+                  <div className="flex justify-between border-b border-white/[0.05] pb-1">
+                    <span className="text-slate-400">Customer Account:</span>
+                    <span className="font-semibold text-slate-200">{task.metadata.customer}</span>
+                  </div>
+                )}
+                {task.metadata?.dealValue && (
+                  <div className="flex justify-between border-b border-white/[0.05] pb-1">
+                    <span className="text-slate-400">Deal Value:</span>
+                    <span className="font-mono font-bold text-emerald-400">{task.metadata.dealValue}</span>
+                  </div>
+                )}
+                {task.metadata?.requester && (
+                  <div className="flex justify-between border-b border-white/[0.05] pb-1">
+                    <span className="text-slate-400">Requester:</span>
+                    <span className="font-semibold text-slate-200">{task.metadata.requester}</span>
+                  </div>
+                )}
+                {task.metadata?.category && (
+                  <div className="flex justify-between border-b border-white/[0.05] pb-1">
+                    <span className="text-slate-400">Category:</span>
+                    <span className="text-slate-200">{task.metadata.category}</span>
+                  </div>
+                )}
+                {task.metadata?.notes && (
+                  <div className="pt-1 text-slate-300 leading-relaxed">
+                    <span className="text-slate-400 block mb-0.5">Notes:</span>
+                    {task.metadata.notes}
+                  </div>
+                )}
+                {task.metadata?.description && (
+                  <div className="pt-1 text-slate-300 leading-relaxed font-mono">
+                    <span className="text-slate-400 block mb-0.5">Description:</span>
+                    {task.metadata.description}
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          {activeTab === "formula" && (
+          {activeTab === "priority" && (
             <div className="space-y-4">
-              <div className="bg-indigo-950/20 border border-indigo-500/30 p-3.5 rounded-xl text-indigo-300 text-xs">
-                <p className="font-semibold mb-1">Intelligent Priority Formula:</p>
-                <code className="text-white font-mono block bg-slate-950/80 p-2 rounded border border-indigo-900/50">
-                  Priority Score = Urgency Weight + Deadline Proximity Boost + Status Adjustment
-                </code>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                  Mathematical Breakdown for {task.id}
-                </h4>
-                
-                <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-400">1. Base Urgency Weight ({task.urgency}):</span>
-                    <span className="font-mono font-bold text-amber-400">+{breakdown.urgencyWeight || 0} pts</span>
-                  </div>
-
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-400">2. Deadline Factor ({task.deadlineStatus}):</span>
-                    <span className="font-mono font-bold text-rose-400">+{breakdown.deadlineScore || 0} pts</span>
-                  </div>
-
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-400">3. Status Adjustment ({task.status}):</span>
-                    <span className="font-mono font-bold text-indigo-400">
-                      {breakdown.statusScore >= 0 ? `+${breakdown.statusScore}` : breakdown.statusScore} pts
-                    </span>
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-800 flex justify-between items-center text-sm font-bold">
-                    <span className="text-white">Total Priority Score:</span>
-                    <span className="font-mono text-indigo-400 text-base">{task.priorityScore} pts</span>
-                  </div>
+              <div className="bg-slate-950/80 p-3.5 rounded-xl border border-white/[0.08] space-y-2.5">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-400">Base Urgency ({task.urgency}):</span>
+                  <span className="font-mono font-bold text-amber-400">+{breakdown.urgencyWeight || 0} pts</span>
                 </div>
 
-                <div className="p-3 bg-slate-950/40 rounded-xl border border-slate-800 text-[11px] text-slate-400">
-                  Tier Category: <strong className="text-white">{task.priorityLabel}</strong> ({task.priorityTier}). Overdue and imminent tasks automatically bubble up to P1 to prevent enterprise SLA breaches.
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-400">Deadline Factor ({task.deadlineStatus}):</span>
+                  <span className="font-mono font-bold text-rose-400">+{breakdown.deadlineScore || 0} pts</span>
+                </div>
+
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-400">Status Weight ({task.status}):</span>
+                  <span className="font-mono font-bold text-indigo-400">
+                    {breakdown.statusScore >= 0 ? `+${breakdown.statusScore}` : breakdown.statusScore} pts
+                  </span>
+                </div>
+
+                <div className="pt-2 border-t border-white/[0.08] flex justify-between items-center text-sm font-bold">
+                  <span className="text-white">Calculated Priority Score:</span>
+                  <span className="font-mono text-indigo-400 text-base">{task.priorityScore} pts</span>
                 </div>
               </div>
-            </div>
-          )}
 
-          {activeTab === "raw" && (
-            <div>
-              <pre className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-[300px]">
-                {JSON.stringify(task, null, 2)}
-              </pre>
+              <div className="p-3 bg-slate-950/40 rounded-xl border border-white/[0.08] text-[11px] text-slate-400">
+                Prioritization Tier: <strong className="text-white">{task.priorityLabel}</strong> ({task.priorityTier}). Tasks with approaching deadlines and higher urgency automatically float to the top of the queue.
+              </div>
             </div>
           )}
 
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
+        <div className="p-4 bg-slate-950 border-t border-white/[0.08] flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 rounded-xl transition"
+            className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 rounded-xl transition"
           >
             Close
           </button>
           
           <button
             onClick={() => onOpenSourceApp(task)}
-            className="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition shadow-md shadow-indigo-600/30 flex items-center space-x-1.5"
+            className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition flex items-center space-x-1.5 shadow-md shadow-indigo-600/30"
           >
             <span>Open in Source Application</span>
             <ExternalLink className="w-3.5 h-3.5" />

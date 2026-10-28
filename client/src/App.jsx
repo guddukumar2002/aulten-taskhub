@@ -9,19 +9,14 @@ import { TaskCardView } from "./components/TaskCardView";
 import { PriorityMatrixView } from "./components/PriorityMatrixView";
 import { TaskDetailModal } from "./components/TaskDetailModal";
 import { MockSourcePortalModal } from "./components/MockSourcePortalModal";
-import { ChaosModal } from "./components/ChaosModal";
-import { ArchitectureModal } from "./components/ArchitectureModal";
 import { ErrorBanner } from "./components/ErrorBanner";
 import { 
   fetchTasks, 
   fetchEmployees, 
   fetchAnalytics, 
-  updateTaskStatus,
-  getChaosConfig,
-  updateChaosConfig,
-  resetChaosConfig
+  updateTaskStatus
 } from "./services/api";
-import { Sparkles, CheckCircle2, ShieldAlert, BookOpen, Layers } from "lucide-react";
+import { Sparkles, CheckCircle2 } from "lucide-react";
 
 export function App() {
   // Data States
@@ -39,7 +34,7 @@ export function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Filters & Controls (Default view: Cards or Table)
+  // Filters & Controls
   const [search, setSearch] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -51,9 +46,6 @@ export function App() {
   // Modal States
   const [detailModalTask, setDetailModalTask] = useState(null);
   const [sourceModalTask, setSourceModalTask] = useState(null);
-  const [isChaosOpen, setIsChaosOpen] = useState(false);
-  const [isDocsOpen, setIsDocsOpen] = useState(false);
-  const [chaosConfig, setChaosConfig] = useState(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -67,7 +59,7 @@ export function App() {
     setErrorMessage(null);
 
     try {
-      const [taskRes, analyticsRes, empRes, chaosRes] = await Promise.all([
+      const [taskRes, analyticsRes, empRes] = await Promise.all([
         fetchTasks({
           employeeId: selectedEmployee,
           status: selectedStatus,
@@ -77,15 +69,13 @@ export function App() {
           sort: selectedSort
         }),
         fetchAnalytics(),
-        fetchEmployees(),
-        getChaosConfig().catch(() => null)
+        fetchEmployees()
       ]);
 
       setTasks(taskRes.tasks || []);
       setServiceHealth(taskRes.serviceHealth || { crm: { healthy: true }, helpdesk: { healthy: true } });
       setAnalytics(analyticsRes);
       setEmployees(empRes || []);
-      if (chaosRes) setChaosConfig(chaosRes);
 
       if (taskRes.isTotalFailure) {
         setErrorMessage("Both CRM and Helpdesk mock services failed to respond.");
@@ -135,7 +125,7 @@ export function App() {
     if (newStatus === "completed") {
       try {
         confetti({
-          particleCount: 100,
+          particleCount: 90,
           spread: 70,
           origin: { y: 0.6 }
         });
@@ -155,28 +145,6 @@ export function App() {
     }
   };
 
-  const handleUpdateChaos = async (partialConfig) => {
-    try {
-      const updated = await updateChaosConfig(partialConfig);
-      setChaosConfig(updated);
-      showToast("Chaos simulation parameters applied");
-      await loadData();
-    } catch (e) {
-      showToast(`Failed to update chaos: ${e.message}`);
-    }
-  };
-
-  const handleResetChaos = async () => {
-    try {
-      const reset = await resetChaosConfig();
-      setChaosConfig(reset);
-      showToast("All upstream APIs restored to normal healthy operation");
-      await loadData();
-    } catch (e) {
-      showToast(`Failed to reset chaos: ${e.message}`);
-    }
-  };
-
   const currentEmp = employees.find((e) => e.id === selectedEmployee);
 
   return (
@@ -190,46 +158,34 @@ export function App() {
         onSelectEmployee={setSelectedEmployee}
         onRefresh={() => loadData(true)}
         isLoading={isLoading || isRetrying}
-        onOpenChaosModal={() => setIsChaosOpen(true)}
-        onOpenDocsModal={() => setIsDocsOpen(true)}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-7">
         
-        {/* Hero Welcome & Briefing Banner */}
-        <div className="relative overflow-hidden rounded-3xl glass-panel-elevated p-5 sm:p-7 mb-6 border border-white/[0.1] bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-900/40 shadow-2xl">
-          <div className="absolute -top-24 -right-24 w-72 h-72 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Clean Dashboard Briefing Header */}
+        <div className="rounded-3xl glass-panel-elevated p-5 sm:p-7 mb-6 border border-white/[0.08] relative overflow-hidden shadow-2xl">
+          <div className="absolute -top-24 -right-24 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold mb-2">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Executive Operations Dashboard</span>
+              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
+                <Sparkles className="w-3 h-3 text-indigo-400" />
+                <span>Unified Task Hub</span>
               </div>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-                {currentEmp ? `Workspace for ${currentEmp.name}` : "Unified Enterprise Task Center"}
+                {currentEmp ? `Tasks for ${currentEmp.name}` : "Employee Task Dashboard"}
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                Aggregating real-time tasks from <strong>Zoho CRM</strong> deals and <strong>Helpdesk / Jira</strong> incident tickets with dynamic prioritization algorithms.
+                Centralized dashboard aggregating tasks from <strong>CRM</strong> and <strong>Helpdesk</strong> with intelligent deadline and urgency prioritization.
               </p>
             </div>
 
-            <div className="flex items-center space-x-2 self-start md:self-auto">
-              <button
-                onClick={() => setIsDocsOpen(true)}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-white/[0.1] transition flex items-center space-x-1.5 shadow-sm"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-                <span>View System Design</span>
-              </button>
-
-              <button
-                onClick={() => setIsChaosOpen(true)}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-rose-300 hover:text-rose-200 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition flex items-center space-x-1.5 shadow-sm"
-              >
-                <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-                <span>Resilience Lab</span>
-              </button>
+            <div className="text-right hidden sm:block">
+              <span className="text-xs text-slate-400 block font-medium">Total Active Tasks</span>
+              <span className="text-2xl font-extrabold text-white font-mono">
+                {analytics?.total || 0}
+              </span>
             </div>
           </div>
         </div>
@@ -243,14 +199,14 @@ export function App() {
           onDismiss={() => setErrorMessage(null)}
         />
 
-        {/* Executive KPI Metric Cards */}
+        {/* Metric Cards */}
         <MetricCards
           analytics={analytics}
           onQuickFilter={handleQuickFilter}
           activeFilter={{ status: selectedStatus, urgency: selectedUrgency }}
         />
 
-        {/* Filter and View Switching Command Center */}
+        {/* Filter Toolbar */}
         <FilterToolbar
           search={search}
           onSearchChange={setSearch}
@@ -272,13 +228,13 @@ export function App() {
           totalResults={tasks.length}
         />
 
-        {/* Loading State or Views */}
+        {/* Task Views */}
         {isLoading && !tasks.length ? (
-          <div className="py-24 text-center glass-panel rounded-2xl my-6">
-            <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <h3 className="text-sm font-bold text-white">Aggregating & Normalizing REST APIs...</h3>
+          <div className="py-20 text-center glass-panel rounded-2xl my-6">
+            <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <h3 className="text-sm font-bold text-white">Loading Tasks...</h3>
             <p className="text-xs text-slate-400 mt-1">
-              Synchronizing Zoho CRM and Helpdesk tickets with mathematical prioritization
+              Fetching and prioritizing tasks from CRM & Helpdesk
             </p>
           </div>
         ) : (
@@ -315,15 +271,13 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.08] bg-[#090d16]/90 py-6 text-xs text-slate-400 mt-12">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-slate-200">Aulten TaskPulse</span>
-            <span>•</span>
-            <span>Practical Hiring Assignment for Aulten Digital Private Limited</span>
+      <footer className="border-t border-white/[0.08] bg-[#090d16]/90 py-5 text-xs text-slate-500 mt-12">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div className="font-semibold text-slate-400">
+            TaskPulse • Employee Task Dashboard
           </div>
           <div>
-            Engineered by <strong className="text-indigo-400">Guddu Kumar</strong> (Full Stack Developer)
+            Built with React & Node.js
           </div>
         </div>
       </footer>
@@ -348,25 +302,9 @@ export function App() {
         />
       )}
 
-      {isChaosOpen && (
-        <ChaosModal
-          chaosConfig={chaosConfig}
-          onUpdateChaos={handleUpdateChaos}
-          onResetChaos={handleResetChaos}
-          onClose={() => setIsChaosOpen(false)}
-          serviceHealth={serviceHealth}
-        />
-      )}
-
-      {isDocsOpen && (
-        <ArchitectureModal
-          onClose={() => setIsDocsOpen(false)}
-        />
-      )}
-
       {/* Toast Feedback */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center space-x-2 border border-white/20 animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-indigo-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold flex items-center space-x-2 border border-white/20 animate-bounce">
           <CheckCircle2 className="w-4 h-4 text-emerald-300" />
           <span>{toastMessage}</span>
         </div>

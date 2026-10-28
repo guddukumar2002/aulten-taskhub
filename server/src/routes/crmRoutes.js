@@ -1,25 +1,19 @@
 // server/src/routes/crmRoutes.js
 import express from "express";
 import { initialCrmTasks } from "../data/crmData.js";
-import { chaosService } from "../services/chaosService.js";
 
 const router = express.Router();
 
-// In-memory mutable store for demo
 let crmTasks = [...initialCrmTasks];
 
 /**
  * GET /api/crm/tasks
  * Simulates CRM REST API endpoint
  */
-router.get("/tasks", async (req, res, next) => {
+router.get("/tasks", (req, res, next) => {
   try {
-    await chaosService.applyLatency();
-    chaosService.checkCrmFailure();
-
     let result = [...crmTasks];
 
-    // Optional query filters
     if (req.query.employeeId) {
       result = result.filter((t) => t.assignedEmployee.id === req.query.employeeId);
     }
@@ -42,11 +36,8 @@ router.get("/tasks", async (req, res, next) => {
 /**
  * GET /api/crm/tasks/:id
  */
-router.get("/tasks/:id", async (req, res, next) => {
+router.get("/tasks/:id", (req, res, next) => {
   try {
-    await chaosService.applyLatency();
-    chaosService.checkCrmFailure();
-
     const task = crmTasks.find((t) => t.id === req.params.id);
     if (!task) {
       return res.status(404).json({ success: false, message: `CRM Task ${req.params.id} not found` });
@@ -60,7 +51,7 @@ router.get("/tasks/:id", async (req, res, next) => {
 /**
  * PATCH /api/crm/tasks/:id/status
  */
-router.patch("/tasks/:id/status", async (req, res, next) => {
+router.patch("/tasks/:id/status", (req, res, next) => {
   try {
     const { status } = req.body;
     const taskIndex = crmTasks.findIndex((t) => t.id === req.params.id);
