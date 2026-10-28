@@ -14,6 +14,10 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true
+      },
+      '/portal': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
       }
     }
   }

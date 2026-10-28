@@ -13,7 +13,7 @@ export const initialHelpdeskTasks = [
     priority: "Urgent",
     status: "To Do",
     dueDate: "2026-10-28T19:30:00Z", // Due today in a couple of hours
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-201",
+    sourceUrl: "/portal/helpdesk/HD-201",
     createdAt: "2026-10-28T12:15:00Z",
     metadata: {
       requester: "Industrial IoT Operations",
@@ -31,7 +31,7 @@ export const initialHelpdeskTasks = [
     priority: "Urgent",
     status: "In Progress",
     dueDate: "2026-10-27T20:00:00Z", // OVERDUE by ~1 day!
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-202",
+    sourceUrl: "/portal/helpdesk/HD-202",
     createdAt: "2026-10-27T08:30:00Z",
     metadata: {
       requester: "Billing & Finance Operations",
@@ -49,7 +49,7 @@ export const initialHelpdeskTasks = [
     priority: "High",
     status: "In Progress",
     dueDate: "2026-10-29T10:00:00Z",
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-203",
+    sourceUrl: "/portal/helpdesk/HD-203",
     createdAt: "2026-10-28T09:00:00Z",
     metadata: {
       requester: "DevOps Automated Alert",
@@ -67,7 +67,7 @@ export const initialHelpdeskTasks = [
     priority: "Medium",
     status: "To Do",
     dueDate: "2026-10-31T17:00:00Z",
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-204",
+    sourceUrl: "/portal/helpdesk/HD-204",
     createdAt: "2026-10-26T16:00:00Z",
     metadata: {
       requester: "Mobile QA Lead",
@@ -85,7 +85,7 @@ export const initialHelpdeskTasks = [
     priority: "Medium",
     status: "Blocked",
     dueDate: "2026-11-01T15:00:00Z",
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-205",
+    sourceUrl: "/portal/helpdesk/HD-205",
     createdAt: "2026-10-25T11:40:00Z",
     metadata: {
       requester: "Surya Prakash (Dealer)",
@@ -103,7 +103,7 @@ export const initialHelpdeskTasks = [
     priority: "Low",
     status: "Completed",
     dueDate: "2026-10-25T18:00:00Z",
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-206",
+    sourceUrl: "/portal/helpdesk/HD-206",
     createdAt: "2026-10-20T10:00:00Z",
     metadata: {
       requester: "Engineering Operations",
@@ -121,7 +121,7 @@ export const initialHelpdeskTasks = [
     priority: "Low",
     status: "To Do",
     dueDate: "2026-11-05T12:00:00Z",
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-207",
+    sourceUrl: "/portal/helpdesk/HD-207",
     createdAt: "2026-10-27T14:00:00Z",
     metadata: {
       requester: "Customer Support Desk",
@@ -139,7 +139,7 @@ export const initialHelpdeskTasks = [
     priority: "High",
     status: "In Progress",
     dueDate: "2026-10-30T10:00:00Z",
-    sourceUrl: "https://helpdesk.aultentaskhub.internal/tickets/HD-208",
+    sourceUrl: "/portal/helpdesk/HD-208",
     createdAt: "2026-10-28T08:00:00Z",
     metadata: {
       requester: "Security Operations",

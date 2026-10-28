@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { crmRouter } from "./routes/crmRoutes.js";
 import { helpdeskRouter } from "./routes/helpdeskRoutes.js";
 import { taskRouter } from "./routes/taskRoutes.js";
+import { portalRouter } from "./routes/portalRoutes.js";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // Mount Routes
+app.use("/portal", portalRouter);
 app.use("/api/crm", crmRouter);
 app.use("/api/helpdesk", helpdeskRouter);
 app.use("/api", taskRouter);
@@ -60,7 +62,7 @@ app.use((err, req, res, next) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`=======================================================`);
-  console.log(`🚀 Aulten TaskPulse Server running on port ${PORT}`);
+  console.log(`🚀 Aulten TaskHub Server running on port ${PORT}`);
   console.log(`📡 Health Check:     http://localhost:${PORT}/api/health`);
   console.log(`📋 Unified Tasks:    http://localhost:${PORT}/api/tasks`);
   console.log(`💼 CRM Mock API:     http://localhost:${PORT}/api/crm/tasks`);

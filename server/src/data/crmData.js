@@ -13,7 +13,7 @@ export const initialCrmTasks = [
     priority: "Urgent",
     status: "In Progress",
     dueDate: "2026-10-28T21:00:00Z", // Due today in a few hours
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-101",
+    sourceUrl: "/portal/crm/CRM-101",
     createdAt: "2026-10-24T09:00:00Z",
     metadata: {
       customer: "Reliance Retail Ltd",
@@ -32,7 +32,7 @@ export const initialCrmTasks = [
     priority: "High",
     status: "To Do",
     dueDate: "2026-10-27T17:00:00Z", // OVERDUE by 1 day!
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-102",
+    sourceUrl: "/portal/crm/CRM-102",
     createdAt: "2026-10-22T11:15:00Z",
     metadata: {
       customer: "Havells India Ltd",
@@ -51,7 +51,7 @@ export const initialCrmTasks = [
     priority: "High",
     status: "To Do",
     dueDate: "2026-10-29T14:00:00Z", // Due tomorrow
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-103",
+    sourceUrl: "/portal/crm/CRM-103",
     createdAt: "2026-10-25T14:30:00Z",
     metadata: {
       customer: "Schneider Electric",
@@ -70,7 +70,7 @@ export const initialCrmTasks = [
     priority: "Medium",
     status: "In Progress",
     dueDate: "2026-10-30T16:00:00Z",
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-104",
+    sourceUrl: "/portal/crm/CRM-104",
     createdAt: "2026-10-21T08:45:00Z",
     metadata: {
       customer: "Tata Power Renewable",
@@ -89,7 +89,7 @@ export const initialCrmTasks = [
     priority: "Low",
     status: "Completed",
     dueDate: "2026-10-26T12:00:00Z",
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-105",
+    sourceUrl: "/portal/crm/CRM-105",
     createdAt: "2026-10-18T10:00:00Z",
     metadata: {
       customer: "Bawana Industrial Guild",
@@ -108,7 +108,7 @@ export const initialCrmTasks = [
     priority: "Medium",
     status: "To Do",
     dueDate: "2026-11-03T11:00:00Z",
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-106",
+    sourceUrl: "/portal/crm/CRM-106",
     createdAt: "2026-10-26T15:20:00Z",
     metadata: {
       customer: "DMRC Rail Logistics",
@@ -127,7 +127,7 @@ export const initialCrmTasks = [
     priority: "High",
     status: "Blocked",
     dueDate: "2026-10-31T18:00:00Z",
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-107",
+    sourceUrl: "/portal/crm/CRM-107",
     createdAt: "2026-10-25T09:15:00Z",
     metadata: {
       customer: "Adani Green Energy",
@@ -146,7 +146,7 @@ export const initialCrmTasks = [
     priority: "Low",
     status: "Completed",
     dueDate: "2026-10-25T15:00:00Z",
-    sourceUrl: "https://crm.aultentaskhub.internal/deals/CRM-108",
+    sourceUrl: "/portal/crm/CRM-108",
     createdAt: "2026-10-15T12:00:00Z",
     metadata: {
       customer: "Internal Operations",
