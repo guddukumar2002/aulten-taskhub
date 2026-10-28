@@ -74,7 +74,7 @@ export function TaskCardView({
 
                 {/* Priority Tier Badge */}
                 <div className="flex items-center space-x-2">
-                  <span className={`px-2.5 py-0.5 rounded-lg font-extrabold text-xs inline-flex items-center space-x-1 shadow-sm ${
+                  <span className={`px-2.5 py-1 rounded-lg font-extrabold text-xs inline-flex items-center space-x-1 shadow-sm ${
                     isCompleted
                       ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
                       : isP1
@@ -86,10 +86,7 @@ export function TaskCardView({
                       : "bg-slate-800 text-slate-400 border border-slate-700"
                   }`}>
                     {isP1 && <Flame className="w-3.5 h-3.5 text-rose-400 mr-0.5" />}
-                    <span>{task.priorityTier}</span>
-                  </span>
-                  <span className="text-[11px] font-mono font-bold text-slate-400">
-                    {task.priorityScore} pts
+                    <span>{task.priorityTier} Priority</span>
                   </span>
                 </div>
               </div>

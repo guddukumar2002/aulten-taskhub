@@ -5,12 +5,9 @@ import {
   Clock, 
   AlertTriangle, 
   Briefcase, 
-  HelpCircle,
-  Eye,
-  Flame,
-  CheckCircle2,
-  Calendar,
-  Sparkles
+  HelpCircle, 
+  Eye, 
+  Flame 
 } from "lucide-react";
 
 export function TaskListView({ 
@@ -22,8 +19,8 @@ export function TaskListView({
   if (tasks.length === 0) {
     return (
       <div className="glass-panel rounded-2xl p-12 text-center my-6">
-        <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto text-indigo-400 mb-3 shadow-lg shadow-indigo-500/10">
-          <HelpCircle className="w-7 h-7" />
+        <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto text-indigo-400 mb-3 shadow-lg shadow-indigo-500/10">
+          <HelpCircle className="w-6 h-6" />
         </div>
         <h3 className="text-base font-bold text-white">No tasks match your filter criteria</h3>
         <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
@@ -36,17 +33,17 @@ export function TaskListView({
   return (
     <div className="space-y-4">
       
-      {/* 1. Desktop & Laptop View: Polished Enterprise Table */}
-      <div className="hidden md:block glass-panel-elevated rounded-2xl overflow-hidden shadow-2xl">
+      {/* Desktop Table View */}
+      <div className="hidden md:block glass-panel-elevated rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-950/80 border-b border-white/[0.08] text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                <th className="py-4 px-4">Priority & Score</th>
-                <th className="py-4 px-4">Task Details & Customer</th>
-                <th className="py-4 px-4">System</th>
+                <th className="py-4 px-4">Priority</th>
+                <th className="py-4 px-4">Task Details</th>
+                <th className="py-4 px-4">Source</th>
                 <th className="py-4 px-4">Assignee</th>
-                <th className="py-4 px-4">Deadline & SLA</th>
+                <th className="py-4 px-4">Deadline</th>
                 <th className="py-4 px-4">Status</th>
                 <th className="py-4 px-4 text-right">Action</th>
               </tr>
@@ -64,27 +61,22 @@ export function TaskListView({
                       isOverdue ? "bg-rose-950/20" : ""
                     }`}
                   >
-                    {/* Priority Tier & Calculated Score */}
+                    {/* Priority Tier Badge */}
                     <td className="py-4 px-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
-                        <span className={`px-2.5 py-1 rounded-lg font-extrabold text-xs inline-flex items-center space-x-1 shadow-sm ${
-                          isCompleted
-                            ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                            : isP1
-                            ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 urgent-pulse"
-                            : task.priorityTier === "P2"
-                            ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                            : task.priorityTier === "P3"
-                            ? "bg-sky-500/15 text-sky-300 border border-sky-500/30"
-                            : "bg-slate-800 text-slate-400 border border-slate-700"
-                        }`}>
-                          {isP1 && <Flame className="w-3.5 h-3.5 text-rose-400 mr-0.5" />}
-                          <span>{task.priorityTier}</span>
-                        </span>
-                        <span className="text-[11px] font-mono text-slate-400 font-bold" title="Smart Priority Score">
-                          {task.priorityScore} pts
-                        </span>
-                      </div>
+                      <span className={`px-2.5 py-1 rounded-lg font-bold text-xs inline-flex items-center space-x-1 shadow-sm ${
+                        isCompleted
+                          ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                          : isP1
+                          ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 urgent-pulse"
+                          : task.priorityTier === "P2"
+                          ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                          : task.priorityTier === "P3"
+                          ? "bg-sky-500/15 text-sky-300 border border-sky-500/30"
+                          : "bg-slate-800 text-slate-400 border border-slate-700"
+                      }`}>
+                        {isP1 && <Flame className="w-3.5 h-3.5 text-rose-400 mr-0.5" />}
+                        <span>{task.priorityTier} {task.urgency === "critical" ? "Urgent" : task.urgency === "high" ? "High" : ""}</span>
+                      </span>
                     </td>
 
                     {/* Task Title & Metadata */}
@@ -93,17 +85,6 @@ export function TaskListView({
                         <div className="flex items-center space-x-2 mb-1">
                           <span className="font-mono text-xs font-bold text-indigo-400">
                             {task.id}
-                          </span>
-                          <span className={`text-[10px] uppercase font-extrabold px-1.5 py-0.2 rounded ${
-                            task.urgency === "critical"
-                              ? "bg-rose-500/20 text-rose-300"
-                              : task.urgency === "high"
-                              ? "bg-amber-500/20 text-amber-300"
-                              : task.urgency === "medium"
-                              ? "bg-sky-500/20 text-sky-300"
-                              : "bg-slate-800 text-slate-400"
-                          }`}>
-                            {task.urgency}
                           </span>
                         </div>
                         
@@ -117,17 +98,17 @@ export function TaskListView({
                         <div className="flex items-center space-x-2.5 mt-1 text-[11px] text-slate-400">
                           {task.metadata?.customer && (
                             <span className="text-slate-300 font-semibold">
-                              🏢 {task.metadata.customer}
+                              Account: {task.metadata.customer}
                             </span>
                           )}
                           {task.metadata?.dealValue && (
                             <span className="text-emerald-400 font-mono font-bold">
-                              💰 {task.metadata.dealValue}
+                              {task.metadata.dealValue}
                             </span>
                           )}
                           {task.metadata?.requester && (
                             <span className="text-slate-300 font-semibold">
-                              👤 {task.metadata.requester}
+                              Requester: {task.metadata.requester}
                             </span>
                           )}
                           {task.metadata?.category && (
@@ -139,15 +120,15 @@ export function TaskListView({
                       </div>
                     </td>
 
-                    {/* Source System Badge */}
+                    {/* Source System */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       {task.source === "CRM" ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/25">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/25">
                           <Briefcase className="w-3.5 h-3.5 mr-1" />
-                          Zoho CRM
+                          CRM
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/25">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/25">
                           <HelpCircle className="w-3.5 h-3.5 mr-1" />
                           Helpdesk
                         </span>
@@ -160,7 +141,7 @@ export function TaskListView({
                         <img
                           src={task.assignedTo.avatar}
                           alt={task.assignedTo.name}
-                          className="w-7 h-7 rounded-full object-cover ring-2 ring-indigo-500/20"
+                          className="w-7 h-7 rounded-full object-cover ring-1 ring-white/10"
                         />
                         <div>
                           <div className="font-bold text-slate-200 leading-tight">
@@ -173,22 +154,17 @@ export function TaskListView({
                       </div>
                     </td>
 
-                    {/* Deadline & SLA */}
+                    {/* Deadline */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       <div className="flex flex-col">
-                        <div className="flex items-center space-x-1.5 font-bold">
+                        <div className="flex items-center space-x-1 font-bold">
                           {isOverdue ? (
                             <span className="text-rose-400 flex items-center space-x-1">
                               <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
                               <span>{task.timeRemainingFormatted}</span>
                             </span>
-                          ) : task.deadlineStatus === "due_soon_6h" || task.deadlineStatus === "due_today" ? (
-                            <span className="text-amber-400 flex items-center space-x-1">
-                              <Clock className="w-3.5 h-3.5 text-amber-500" />
-                              <span>{task.timeRemainingFormatted}</span>
-                            </span>
                           ) : (
-                            <span className="text-slate-300">
+                            <span className={task.deadlineStatus === "due_soon_6h" || task.deadlineStatus === "due_today" ? "text-amber-400" : "text-slate-300"}>
                               {task.timeRemainingFormatted}
                             </span>
                           )}
@@ -196,15 +172,13 @@ export function TaskListView({
                         <span className="text-[10px] text-slate-500 mt-0.5 font-mono">
                           {new Date(task.deadline).toLocaleDateString("en-IN", {
                             month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit"
+                            day: "numeric"
                           })}
                         </span>
                       </div>
                     </td>
 
-                    {/* Interactive Status Changer */}
+                    {/* Status Changer */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       <select
                         value={task.status}
@@ -219,20 +193,20 @@ export function TaskListView({
                             : "bg-slate-950 text-slate-300 border-white/[0.1]"
                         }`}
                       >
-                        <option value="pending" className="bg-[#0f172a] text-slate-200">🟡 Pending</option>
-                        <option value="in_progress" className="bg-[#0f172a] text-slate-200">🔵 In Progress</option>
-                        <option value="completed" className="bg-[#0f172a] text-slate-200">🟢 Resolved</option>
-                        <option value="blocked" className="bg-[#0f172a] text-slate-200">🟠 Blocked</option>
+                        <option value="pending" className="bg-[#0f172a] text-slate-200">Pending</option>
+                        <option value="in_progress" className="bg-[#0f172a] text-slate-200">In Progress</option>
+                        <option value="completed" className="bg-[#0f172a] text-slate-200">Resolved</option>
+                        <option value="blocked" className="bg-[#0f172a] text-slate-200">Blocked</option>
                       </select>
                     </td>
 
-                    {/* Actions: Inspect & Open Source */}
+                    {/* Actions */}
                     <td className="py-4 px-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => onViewTaskDetail(task)}
-                          title="Inspect Details"
-                          className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-xl transition border border-transparent hover:border-white/[0.08]"
+                          title="View Details"
+                          className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-xl transition"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -240,7 +214,7 @@ export function TaskListView({
                         <button
                           onClick={() => onOpenSourceApp(task)}
                           title={`Open ${task.sourcePlatform}`}
-                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-indigo-300 hover:text-white bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/40 rounded-xl transition shadow-sm active:scale-95"
+                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-indigo-300 hover:text-white bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/40 rounded-xl transition shadow-sm"
                         >
                           <span>Open</span>
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -255,7 +229,7 @@ export function TaskListView({
         </div>
       </div>
 
-      {/* 2. Mobile & Tablet Auto-Collapse View (Prevents bad table overflow) */}
+      {/* Mobile Card Stack View */}
       <div className="md:hidden space-y-3">
         {tasks.map((task) => {
           const isOverdue = task.deadlineStatus === "overdue" && task.status !== "completed";
@@ -268,31 +242,23 @@ export function TaskListView({
                 isOverdue ? "border-rose-500/40 bg-rose-950/15" : "border-white/[0.08]"
               }`}
             >
-              {/* Top Row: Priority Badge + Source Badge */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <span className={`px-2.5 py-0.5 rounded-lg font-bold text-xs ${
                     isP1 ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 urgent-pulse" : "bg-slate-800 text-slate-300"
                   }`}>
-                    {task.priorityTier} ({task.priorityScore} pts)
+                    {task.priorityTier}
                   </span>
                   <span className="font-mono text-xs font-bold text-indigo-400">
                     {task.id}
                   </span>
                 </div>
 
-                {task.source === "CRM" ? (
-                  <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/25">
-                    Zoho CRM
-                  </span>
-                ) : (
-                  <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/25">
-                    Helpdesk
-                  </span>
-                )}
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-800 text-slate-300">
+                  {task.source}
+                </span>
               </div>
 
-              {/* Title */}
               <h4 
                 onClick={() => onViewTaskDetail(task)}
                 className="text-sm font-bold text-slate-100 hover:text-indigo-300 cursor-pointer line-clamp-2"
@@ -300,29 +266,6 @@ export function TaskListView({
                 {task.title}
               </h4>
 
-              {/* Context */}
-              <div className="text-xs text-slate-400 space-y-1">
-                {task.metadata?.customer && (
-                  <div className="flex justify-between">
-                    <span>Client:</span>
-                    <span className="text-slate-200 font-semibold">{task.metadata.customer}</span>
-                  </div>
-                )}
-                {task.metadata?.dealValue && (
-                  <div className="flex justify-between">
-                    <span>Deal:</span>
-                    <span className="text-emerald-400 font-mono font-bold">{task.metadata.dealValue}</span>
-                  </div>
-                )}
-                {task.metadata?.requester && (
-                  <div className="flex justify-between">
-                    <span>Requester:</span>
-                    <span className="text-slate-200 font-semibold">{task.metadata.requester}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* SLA & Assignee */}
               <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-2">
                   <img
@@ -338,17 +281,16 @@ export function TaskListView({
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="pt-2 flex items-center gap-2">
                 <select
                   value={task.status}
                   onChange={(e) => onUpdateStatus(task.id, e.target.value)}
                   className="flex-1 bg-slate-950 border border-white/[0.1] text-slate-200 text-xs font-bold rounded-xl px-2.5 py-2 cursor-pointer"
                 >
-                  <option value="pending">🟡 Pending</option>
-                  <option value="in_progress">🔵 In Progress</option>
-                  <option value="completed">🟢 Resolved</option>
-                  <option value="blocked">🟠 Blocked</option>
+                  <option value="pending">Pending</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="completed">Resolved</option>
+                  <option value="blocked">Blocked</option>
                 </select>
 
                 <button

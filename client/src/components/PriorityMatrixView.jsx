@@ -134,9 +134,6 @@ export function PriorityMatrixView({
                               Helpdesk
                             </span>
                           )}
-                          <span className="text-[10px] text-slate-400 font-mono font-bold">
-                            {task.priorityScore} pts
-                          </span>
                         </div>
 
                         <h5
