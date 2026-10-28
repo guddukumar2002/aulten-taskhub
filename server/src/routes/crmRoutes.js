@@ -3,27 +3,35 @@ import express from "express";
 import { initialCrmTasks } from "../data/crmData.js";
 
 const router = express.Router();
-
 let crmTasks = [...initialCrmTasks];
 
 /**
  * GET /api/crm/tasks
- * Simulates CRM REST API endpoint
+ * Exposes mock CRM REST API tasks
+ * Supports development simulation param: ?simulate_error=true
  */
 router.get("/tasks", (req, res, next) => {
   try {
+    if (req.query.simulate_error === "true" || req.query.simulate_error === "crm") {
+      return res.status(500).json({
+        success: false,
+        source: "CRM",
+        message: "Simulated CRM upstream service failure (HTTP 500)"
+      });
+    }
+
     let result = [...crmTasks];
 
     if (req.query.employeeId) {
-      result = result.filter((t) => t.assignedEmployee.id === req.query.employeeId);
+      result = result.filter((t) => t.employeeId === req.query.employeeId);
     }
     if (req.query.status) {
-      result = result.filter((t) => t.status === req.query.status);
+      result = result.filter((t) => t.status.toLowerCase() === req.query.status.toLowerCase());
     }
 
     res.json({
       success: true,
-      source: "CRM (Zoho / Salesforce)",
+      source: "CRM",
       count: result.length,
       data: result,
       timestamp: new Date().toISOString()

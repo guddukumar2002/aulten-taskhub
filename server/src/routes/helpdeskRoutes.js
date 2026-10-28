@@ -1,29 +1,32 @@
 // server/src/routes/helpdeskRoutes.js
 import express from "express";
-import { initialHelpdeskTickets } from "../data/helpdeskData.js";
+import { initialHelpdeskTasks } from "../data/helpdeskData.js";
 
 const router = express.Router();
+let helpdeskTasks = [...initialHelpdeskTasks];
 
-let helpdeskTickets = [...initialHelpdeskTickets];
-
-/**
- * GET /api/helpdesk/tickets
- * Simulates Helpdesk REST API endpoint
- */
-router.get("/tickets", (req, res, next) => {
+const getTasksHandler = (req, res, next) => {
   try {
-    let result = [...helpdeskTickets];
+    if (req.query.simulate_error === "true" || req.query.simulate_error === "helpdesk") {
+      return res.status(503).json({
+        success: false,
+        source: "Helpdesk",
+        message: "Simulated Helpdesk upstream service failure (HTTP 503)"
+      });
+    }
 
-    if (req.query.empId) {
-      result = result.filter((t) => t.assignee.empId === req.query.empId);
+    let result = [...helpdeskTasks];
+
+    if (req.query.employeeId) {
+      result = result.filter((t) => t.employeeId === req.query.employeeId);
     }
     if (req.query.status) {
-      result = result.filter((t) => t.ticketStatus === req.query.status);
+      result = result.filter((t) => t.status.toLowerCase() === req.query.status.toLowerCase());
     }
 
     res.json({
       success: true,
-      source: "Helpdesk (Zendesk / Jira)",
+      source: "Helpdesk",
       count: result.length,
       data: result,
       timestamp: new Date().toISOString()
@@ -31,44 +34,50 @@ router.get("/tickets", (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
 
 /**
- * GET /api/helpdesk/tickets/:id
+ * GET /api/helpdesk/tasks and alias /api/helpdesk/tickets
  */
-router.get("/tickets/:id", (req, res, next) => {
+router.get("/tasks", getTasksHandler);
+router.get("/tickets", getTasksHandler);
+
+/**
+ * GET /api/helpdesk/tasks/:id
+ */
+router.get("/tasks/:id", (req, res, next) => {
   try {
-    const ticket = helpdeskTickets.find((t) => t.ticketId === req.params.id);
-    if (!ticket) {
-      return res.status(404).json({ success: false, message: `Helpdesk Ticket ${req.params.id} not found` });
+    const task = helpdeskTasks.find((t) => t.id === req.params.id);
+    if (!task) {
+      return res.status(404).json({ success: false, message: `Helpdesk Task ${req.params.id} not found` });
     }
-    res.json({ success: true, data: ticket });
+    res.json({ success: true, data: task });
   } catch (error) {
     next(error);
   }
 });
 
 /**
- * PATCH /api/helpdesk/tickets/:id/status
+ * PATCH /api/helpdesk/tasks/:id/status
  */
-router.patch("/tickets/:id/status", (req, res, next) => {
+router.patch("/tasks/:id/status", (req, res, next) => {
   try {
     const { status } = req.body;
-    const ticketIndex = helpdeskTickets.findIndex((t) => t.ticketId === req.params.id);
-    if (ticketIndex === -1) {
-      return res.status(404).json({ success: false, message: `Helpdesk Ticket ${req.params.id} not found` });
+    const taskIndex = helpdeskTasks.findIndex((t) => t.id === req.params.id);
+    if (taskIndex === -1) {
+      return res.status(404).json({ success: false, message: `Helpdesk Task ${req.params.id} not found` });
     }
 
-    helpdeskTickets[ticketIndex] = {
-      ...helpdeskTickets[ticketIndex],
-      ticketStatus: status || helpdeskTickets[ticketIndex].ticketStatus,
+    helpdeskTasks[taskIndex] = {
+      ...helpdeskTasks[taskIndex],
+      status: status || helpdeskTasks[taskIndex].status,
       updatedAt: new Date().toISOString()
     };
 
-    res.json({ success: true, message: "Helpdesk ticket updated", data: helpdeskTickets[ticketIndex] });
+    res.json({ success: true, message: "Helpdesk task updated", data: helpdeskTasks[taskIndex] });
   } catch (error) {
     next(error);
   }
 });
 
-export { router as helpdeskRouter, helpdeskTickets };
+export { router as helpdeskRouter, helpdeskTasks };

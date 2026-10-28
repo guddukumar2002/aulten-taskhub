@@ -1,93 +1,63 @@
-# Employee Task Dashboard (TaskPulse)
+# Aulten TaskHub — Enterprise Employee Task Dashboard
 
-A responsive full-stack web application that unifies and prioritizes tasks from multiple external systems (CRM and Helpdesk) into a single, clean employee dashboard.
-
-Built with **React**, **Node.js/Express**, and **Tailwind CSS**.
+A production-grade, full-stack Employee Task Dashboard built for enterprise CRM and Helpdesk environments. Aulten TaskHub unifies disparate task pipelines into a single, high-performance operational interface featuring deterministic deadline scoring, partial-failure resilience via `Promise.allSettled`, and direct source deep-linking.
 
 ---
 
-## Features
+## Key Highlights
 
-- **Dual REST API Aggregation:** Fetches and harmonizes tasks from two mock REST APIs (CRM deals/leads and Helpdesk support tickets) via an Express backend gateway.
-- **Intelligent Prioritization:** Calculates priority dynamically based on urgency level (Critical, High, Medium, Low) and deadline proximity (overdue escalation penalty, due today, due soon).
-- **Multi-Dimensional Filters:** Filter tasks by assigned employee, status (Pending, In Progress, Resolved, Blocked), urgency, and source system, with real-time text search.
-- **Clickable Source Links:** Every task includes direct links to view the item in its respective source application (CRM or Helpdesk).
-- **Resilient Error Handling:** Includes graceful degradation and failover handling so that if one upstream service is unavailable, tasks from the remaining service continue to display alongside non-blocking user feedback and retry controls.
-- **Multiple Views:** Switch between a responsive **Table View**, **Card Grid View**, and an **Eisenhower Priority Matrix**.
-
----
-
-## Tech Stack
-
-- **Frontend:** React 19, Tailwind CSS, Vite, Lucide Icons, Canvas Confetti
-- **Backend:** Node.js, Express 4, Morgan, CORS
-- **DevOps (Optional):** Docker, Docker Compose
+- **Linear / Stripe-Inspired Design System:** Clean, modern light theme (`#f8fafc` background, crisp slate typography, subtle borders, restrained shadows).
+- **Dual REST API Aggregation:** Concurrently integrates CRM and Helpdesk feeds through an Express API gateway with shared task contracts.
+- **Deterministic Prioritization Engine:** Transparent mathematical scoring based on deadline proximity, urgency severity, and workflow state.
+- **Fault-Tolerant Resilience:** Built with non-blocking concurrent fetching (`Promise.allSettled`). If CRM or Helpdesk goes offline, the other service continues functioning with an informative warning banner.
+- **Executive Visualizations:** Interactive Recharts Donut (Status Distribution) and Bar Chart (Priority Volume).
+- **Interactive Multi-Filtering:** Search across titles/descriptions/IDs, filter by employee, status, priority, or source system with instant sorting.
+- **Slide-Out Inspection Drawer:** Keyboard-accessible (`Esc`) drawer showing complete metadata, score breakdowns, and one-click status transitions.
+- **Deep-Linking to Source Portals:** Every task features secure external links (`target="_blank" rel="noopener noreferrer"`) directly into the CRM deal or Helpdesk ticket portal.
+- **100% Responsive Layout:** Seamlessly transitions from desktop table view with pagination into a stacked mobile card view on smaller viewports.
 
 ---
 
-## Getting Started
+## Technology Stack
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [npm](https://www.npmjs.com/) (v9 or higher)
-
----
-
-### Quick Start (Local Development)
-
-1. **Clone the repository:**
-   ```bash
-   git clone <repo-url>
-   cd employee-task-dashboard
-   ```
-
-2. **Install all dependencies:**
-   ```bash
-   npm run install:all
-   ```
-
-3. **Start both Server & Client concurrently:**
-   ```bash
-   npm run dev
-   ```
-
-- **Frontend:** [http://localhost:3000](http://localhost:3000)
-- **Backend API:** [http://localhost:5000](http://localhost:5000)
-- **API Health:** [http://localhost:5000/api/health](http://localhost:5000/api/health)
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite 8, Tailwind CSS v4, Recharts, Lucide React, Canvas Confetti |
+| **Backend** | Node.js, Express 4, Morgan, CORS, Dotenv |
+| **Testing** | Vitest (unit tests for prioritization engine & API resilience) |
+| **DevOps** | Docker, Docker Compose, Nginx |
 
 ---
 
-### Manual Setup (Step-by-Step)
+## Prioritization Engine Scoring Formula
 
-If you prefer running server and client in separate terminals:
+The dashboard implements deterministic scoring:
 
-**1. Start the Backend Server:**
-```bash
-cd server
-npm install
-npm run dev
-# Server runs on port 5000
-```
+$$\text{Priority Score} = \text{Priority Weight} + \text{Deadline Proximity Score} + \text{Status Modifier}$$
 
-**2. Start the Frontend Client:**
-```bash
-cd client
-npm install
-npm run dev
-# Frontend runs on port 3000
-```
+### Scoring Matrix
 
----
+| Rule / Trigger | Points | Category | Business Rationale |
+| :--- | :--- | :--- | :--- |
+| **Overdue active task** | **+100 pts** | Deadline Proximity | Prevents SLA and contract breaches |
+| **Due today (calendar today)** | **+70 pts** | Deadline Proximity | Target deliverables for end-of-day |
+| **Due within 24 hours** | **+60 pts** | Deadline Proximity | Imminent deadline escalation |
+| **Due within 3 days** | **+40 pts** | Deadline Proximity | Short-range sprint priorities |
+| **Due within 7 days** | **+20 pts** | Deadline Proximity | Weekly operational horizon |
+| **Urgent priority flag** | **+50 pts** | Severity | System outages, VIP customer escalations |
+| **High priority flag** | **+30 pts** | Severity | Substantial commercial or client impact |
+| **Medium priority flag** | **+15 pts** | Severity | Standard sprint deliverable |
+| **Low priority flag** | **+5 pts** | Severity | Non-critical administrative action |
+| **Blocked status modifier** | **+10 pts** | Bottleneck | Highlights bottleneck needing supervisor unblocking |
+| **Completed status modifier** | **-1000 pts** | Resolution | Archives resolved items to bottom of list |
 
-### Docker Deployment
+### Priority Tiers
 
-To run containerized versions of the backend and frontend:
-
-```bash
-docker-compose up --build
-```
-Access the application at [http://localhost:3000](http://localhost:3000).
+- **P1 (Score ≥ 120):** Critical urgency (Overdue or Urgent Due Today).
+- **P2 (Score 70 – 119):** High urgency (Due Today or Urgent within 3 days).
+- **P3 (Score 35 – 69):** Medium priority (Due within week or High Priority).
+- **P4 (Score < 35):** Standard backlog.
+- **Done:** Archived resolved tasks.
 
 ---
 
@@ -95,32 +65,85 @@ Access the application at [http://localhost:3000](http://localhost:3000).
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/api/health` | Service health status and uptime |
-| `GET` | `/api/tasks` | Unified aggregated tasks (supports `employeeId`, `status`, `source`, `urgency`, `search`, `sort`) |
-| `PATCH` | `/api/tasks/:id/status` | Update task status (`pending`, `in_progress`, `completed`, `blocked`) |
-| `GET` | `/api/crm/tasks` | Mock CRM REST API endpoint |
-| `GET` | `/api/helpdesk/tickets` | Mock Helpdesk REST API endpoint |
-| `GET` | `/api/employees` | List of employees across systems with task counts |
-| `GET` | `/api/analytics` | High-level summary metrics (counts, completion rate) |
+| `GET` | `/api/health` | Gateway health check, uptime, and system status |
+| `GET` | `/api/crm/tasks` | Mock CRM REST endpoint (deals, pipeline renewals) |
+| `GET` | `/api/helpdesk/tasks` | Mock Helpdesk REST endpoint (tickets, system incidents) |
+| `GET` | `/api/tasks` | Unified aggregated tasks with server-side sorting/filtering |
+| `PATCH` | `/api/tasks/:id/status` | Update task lifecycle (`To Do`, `In Progress`, `Blocked`, `Completed`) |
+| `GET` | `/api/employees` | List of employees across systems with task allocation metrics |
+| `GET` | `/api/analytics` | High-level KPI aggregations and distribution data for charts |
 
 ---
 
-## Prioritization Logic
+## Getting Started
 
-The priority score is calculated using:
+### Prerequisites
 
-$$\text{Priority Score} = \text{Urgency Weight} + \text{Deadline Proximity Boost} + \text{Status Factor}$$
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [npm](https://www.npmjs.com/) (v9 or higher)
 
-- **Urgency Weights:** Critical (+100), High (+75), Medium (+45), Low (+20)
-- **Deadline Proximity:**
-  - Overdue tasks receive a +120 base boost plus an escalation factor based on overdue duration.
-  - Imminent tasks (due within 6 hours) receive +90 points.
-  - Tasks due today (within 24 hours) receive +60 points.
-  - Tasks due within 3 days receive +35 points.
-- **Status Factor:** Completed tasks receive a negative score (-1000) so active items remain at the top of the queue.
+### Installation & Local Run
+
+1. **Install dependencies:**
+   ```bash
+   # In root directory
+   npm run install:all
+   ```
+
+2. **Start both backend & frontend concurrently:**
+   ```bash
+   npm run dev
+   ```
+
+3. **Access the application:**
+   - **Frontend Dashboard:** [http://localhost:3000](http://localhost:3000)
+   - **Backend API Gateway:** [http://localhost:5000](http://localhost:5000)
+   - **Health Check:** [http://localhost:5000/api/health](http://localhost:5000/api/health)
+
+---
+
+## Running Unit Tests
+
+Unit tests are written with **Vitest** covering the prioritization rules and API failover resilience:
+
+```bash
+cd client
+npm test
+```
+
+Expected output:
+```
+ ✓ src/tests/prioritizer.test.ts (6 tests)
+ ✓ src/tests/api.test.ts (4 tests)
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+```
+
+---
+
+## Fault Injection & Resilience Testing
+
+The dashboard allows verifying fault tolerance directly from the **Integrations** tab in the sidebar or via query parameters:
+
+- `?simulate_error=crm`: Forces CRM gateway to return HTTP 503. The dashboard continues running with Helpdesk tasks and displays an amber degradation banner.
+- `?simulate_error=helpdesk`: Forces Helpdesk gateway to return HTTP 503. The dashboard continues running with CRM tasks.
+- `?simulate_error=both`: Forces total outage, displaying a clean recovery alert with a retry action.
+
+---
+
+## Docker Deployment
+
+To build and run containerized instances:
+
+```bash
+docker-compose up --build
+```
+
+Access the dashboard at `http://localhost:3000`.
 
 ---
 
 ## License
 
-MIT
+MIT © Aulten Digital Private Limited
