@@ -28,12 +28,12 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
   isRefreshing
 }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header Banner */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Enterprise Service Connectors</h2>
+            <h2 className="text-base sm:text-lg font-bold text-slate-900">Enterprise Service Connectors</h2>
             <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
               Aulten TaskHub connects to distributed upstream systems using concurrent non-blocking
               fetch routines via <code className="text-indigo-600 font-mono">Promise.allSettled</code>.
@@ -45,7 +45,7 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
           <button
             onClick={onRefresh}
             disabled={isRefreshing}
-            className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0"
+            className="inline-flex items-center justify-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0 w-full sm:w-auto"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
             <span>Test Ping Endpoints</span>
@@ -54,33 +54,33 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
       </div>
 
       {/* Connectors Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {/* CRM Connector Card */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
                 CRM
               </div>
-              <div>
-                <h3 className="text-sm font-semibold text-slate-900">CRM Enterprise Gateway</h3>
-                <span className="text-[11px] text-slate-400 font-mono">/api/crm/tasks</span>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-semibold text-slate-900 truncate">CRM Enterprise Gateway</h3>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 font-mono">/api/crm/tasks</span>
               </div>
             </div>
 
             <div
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium border shrink-0 ${
                 serviceHealth.crm.healthy
                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                   : "bg-rose-50 text-rose-700 border-rose-200"
               }`}
             >
               <span
-                className={`w-2 h-2 rounded-full ${
+                className={`w-1.5 h-1.5 rounded-full ${
                   serviceHealth.crm.healthy ? "bg-emerald-500" : "bg-rose-500"
                 }`}
               />
-              <span>{serviceHealth.crm.healthy ? "Operational" : "Degraded / Offline"}</span>
+              <span>{serviceHealth.crm.healthy ? "Operational" : "Offline"}</span>
             </div>
           </div>
 
@@ -103,31 +103,31 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
         </div>
 
         {/* Helpdesk Connector Card */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
                 HD
               </div>
-              <div>
-                <h3 className="text-sm font-semibold text-slate-900">Helpdesk Ticket Gateway</h3>
-                <span className="text-[11px] text-slate-400 font-mono">/api/helpdesk/tasks</span>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-semibold text-slate-900 truncate">Helpdesk Ticket Gateway</h3>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 font-mono">/api/helpdesk/tasks</span>
               </div>
             </div>
 
             <div
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium border shrink-0 ${
                 serviceHealth.helpdesk.healthy
                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                   : "bg-rose-50 text-rose-700 border-rose-200"
               }`}
             >
               <span
-                className={`w-2 h-2 rounded-full ${
+                className={`w-1.5 h-1.5 rounded-full ${
                   serviceHealth.helpdesk.healthy ? "bg-emerald-500" : "bg-rose-500"
                 }`}
               />
-              <span>{serviceHealth.helpdesk.healthy ? "Operational" : "Degraded / Offline"}</span>
+              <span>{serviceHealth.helpdesk.healthy ? "Operational" : "Offline"}</span>
             </div>
           </div>
 
@@ -151,10 +151,10 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
       </div>
 
       {/* Fault Injection / Resiliency Test Sandbox */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-xs space-y-4">
         <div className="flex items-center space-x-2">
-          <Activity className="w-4 h-4 text-indigo-600" />
-          <h3 className="text-sm font-semibold text-slate-900">
+          <Activity className="w-4 h-4 text-indigo-600 shrink-0" />
+          <h3 className="text-xs sm:text-sm font-semibold text-slate-900">
             Resilience & Fault Tolerance Simulation
           </h3>
         </div>
@@ -164,10 +164,10 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
           exercising partial failure handling, banner notifications, and graceful degradation.
         </p>
 
-        <div className="flex flex-wrap items-center gap-2 pt-2">
+        <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 pt-2">
           <button
             onClick={() => setSimulateError(null)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all ${
               simulateError === null
                 ? "bg-slate-900 text-white shadow-xs"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -178,7 +178,7 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
 
           <button
             onClick={() => setSimulateError("crm")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all ${
               simulateError === "crm"
                 ? "bg-amber-600 text-white shadow-xs"
                 : "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
@@ -189,7 +189,7 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
 
           <button
             onClick={() => setSimulateError("helpdesk")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all ${
               simulateError === "helpdesk"
                 ? "bg-amber-600 text-white shadow-xs"
                 : "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
@@ -200,7 +200,7 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
 
           <button
             onClick={() => setSimulateError("both")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all ${
               simulateError === "both"
                 ? "bg-rose-600 text-white shadow-xs"
                 : "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100"

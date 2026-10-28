@@ -4,7 +4,7 @@ import {
   Bell,
   RefreshCw,
   ChevronDown,
-  User,
+  Menu,
   CheckCircle2,
   AlertTriangle,
   Clock,
@@ -25,6 +25,7 @@ interface TopNavProps {
   onRefresh: () => void;
   tasks: Task[];
   onSelectTask: (task: Task) => void;
+  onOpenMobileSidebar: () => void;
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
@@ -38,7 +39,8 @@ export const TopNav: React.FC<TopNavProps> = ({
   isRefreshing,
   onRefresh,
   tasks,
-  onSelectTask
+  onSelectTask,
+  onOpenMobileSidebar
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -94,27 +96,38 @@ export const TopNav: React.FC<TopNavProps> = ({
   }).format(new Date());
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 px-6 flex items-center justify-between">
-      {/* Left: Breadcrumbs */}
-      <div className="flex items-center space-x-2 text-sm text-slate-500">
-        <span className="font-semibold text-slate-800">Aulten TaskHub</span>
-        <span className="text-slate-300">/</span>
-        <span className="text-indigo-600 font-medium">{getBreadcrumbTitle()}</span>
-        <span className="hidden md:inline text-xs text-slate-400 ml-2 font-mono">
-          ({todayFormatted})
-        </span>
+    <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 px-3 sm:px-6 flex items-center justify-between">
+      {/* Left: Mobile Menu Toggle & Breadcrumbs */}
+      <div className="flex items-center space-x-2 min-w-0 flex-1 sm:flex-initial">
+        <button
+          onClick={onOpenMobileSidebar}
+          className="md:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg -ml-1 transition-colors shrink-0"
+          title="Open navigation menu"
+          aria-label="Toggle navigation menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm text-slate-500 truncate">
+          <span className="font-semibold text-slate-800 shrink-0">Aulten TaskHub</span>
+          <span className="text-slate-300 shrink-0">/</span>
+          <span className="text-indigo-600 font-medium truncate">{getBreadcrumbTitle()}</span>
+          <span className="hidden xl:inline text-xs text-slate-400 ml-2 font-mono shrink-0">
+            ({todayFormatted})
+          </span>
+        </div>
       </div>
 
-      {/* Middle: Quick Search */}
-      <div className="hidden md:flex items-center flex-1 max-w-md mx-6">
+      {/* Middle: Quick Search (Desktop) */}
+      <div className="hidden lg:flex items-center flex-1 max-w-sm xl:max-w-md mx-4">
         <div className="relative w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search by title, ticket ID, customer, or employee..."
+            placeholder="Quick search by title, ID, customer..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+            className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
           />
           {searchQuery && (
             <button
@@ -128,9 +141,9 @@ export const TopNav: React.FC<TopNavProps> = ({
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center space-x-3">
-        {/* Connection status pills */}
-        <div className="hidden lg:flex items-center space-x-2 text-xs">
+      <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+        {/* Connection status pills (Large screens only) */}
+        <div className="hidden xl:flex items-center space-x-2 text-xs">
           <div
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full border ${
               serviceHealth.crm.healthy
@@ -172,20 +185,20 @@ export const TopNav: React.FC<TopNavProps> = ({
         <button
           onClick={onRefresh}
           disabled={isRefreshing}
-          className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200/60 relative"
+          className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200/60 relative"
           title="Refresh task data"
         >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin text-indigo-600" : ""}`} />
+          <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isRefreshing ? "animate-spin text-indigo-600" : ""}`} />
         </button>
 
         {/* Notifications Popover */}
         <div className="relative" ref={notifMenuRef}>
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200/60 relative"
+            className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200/60 relative"
             title="Notifications"
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             {urgentOrOverdue.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">
                 {urgentOrOverdue.length}
@@ -194,7 +207,7 @@ export const TopNav: React.FC<TopNavProps> = ({
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50 animate-fade-in">
+            <div className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-32px)] bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50 animate-fade-in">
               <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-900 uppercase tracking-wider">
                   Needs Attention ({urgentOrOverdue.length})
@@ -233,8 +246,8 @@ export const TopNav: React.FC<TopNavProps> = ({
                         </span>
                       </div>
                       <div className="text-[11px] text-slate-500 mt-1 flex items-center justify-between">
-                        <span>{task.employeeName}</span>
-                        <span className="font-mono text-slate-400">{task.id}</span>
+                        <span className="truncate">{task.employeeName}</span>
+                        <span className="font-mono text-slate-400 ml-2">{task.id}</span>
                       </div>
                     </div>
                   ))
@@ -248,9 +261,9 @@ export const TopNav: React.FC<TopNavProps> = ({
         <div className="relative" ref={userMenuRef}>
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center space-x-2 pl-2 pr-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 transition-all text-xs font-medium text-slate-700 shadow-2xs"
+            className="flex items-center space-x-1.5 sm:space-x-2 pl-1.5 sm:pl-2 pr-2 sm:pr-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 transition-all text-xs font-medium text-slate-700 shadow-2xs"
           >
-            <div className="w-6 h-6 rounded-full bg-indigo-600 text-white font-semibold flex items-center justify-center text-[10px]">
+            <div className="w-6 h-6 rounded-full bg-indigo-600 text-white font-semibold flex items-center justify-center text-[10px] shrink-0">
               {currentEmployee
                 ? currentEmployee.name
                     .split(" ")
@@ -259,14 +272,14 @@ export const TopNav: React.FC<TopNavProps> = ({
                     .slice(0, 2)
                 : "ALL"}
             </div>
-            <span className="font-semibold text-slate-800 hidden sm:inline max-w-[110px] truncate">
-              {currentEmployee ? currentEmployee.name : "All Employees"}
+            <span className="font-semibold text-slate-800 hidden sm:inline max-w-[100px] md:max-w-[120px] truncate">
+              {currentEmployee ? currentEmployee.name : "All Assignees"}
             </span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-1.5 z-50 animate-fade-in">
+            <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-32px)] bg-white rounded-xl shadow-lg border border-slate-200 py-1.5 z-50 animate-fade-in">
               <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-100">
                 Switch Perspective
               </div>
@@ -310,7 +323,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                     </div>
                     <div className="truncate">
                       <div className="font-medium truncate">{emp.name}</div>
-                      {emp.role && <div className="text-[10px] text-slate-400">{emp.role}</div>}
+                      {emp.role && <div className="text-[10px] text-slate-400 truncate">{emp.role}</div>}
                     </div>
                   </div>
                   {selectedEmployeeId === emp.id && (

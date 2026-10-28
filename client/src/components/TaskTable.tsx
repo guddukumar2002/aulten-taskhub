@@ -89,7 +89,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
     <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
               <th className="py-3 px-4">Task & Reason</th>
@@ -163,14 +163,14 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                     {/* Assignee */}
                     <td className="py-3 px-3 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-[10px] border border-slate-200">
+                        <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-[10px] border border-slate-200 shrink-0">
                           {task.employeeName
                             .split(" ")
                             .map((n) => n[0])
                             .join("")
                             .slice(0, 2)}
                         </div>
-                        <span className="text-slate-700 font-medium">{task.employeeName}</span>
+                        <span className="text-slate-700 font-medium truncate">{task.employeeName}</span>
                       </div>
                     </td>
 
@@ -267,7 +267,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
         </table>
       </div>
 
-      {/* Mobile Card Stack View (sm:hidden) */}
+      {/* Mobile Card Stack View (md:hidden) */}
       <div className="md:hidden divide-y divide-slate-100">
         {paginatedTasks.length === 0 ? (
           <div className="p-8 text-center text-slate-500">
@@ -279,10 +279,10 @@ export const TaskTable: React.FC<TaskTableProps> = ({
             <div
               key={task.id}
               onClick={() => onSelectTask(task)}
-              className="p-4 space-y-2.5 active:bg-slate-50 transition-colors"
+              className="p-3.5 sm:p-4 space-y-2.5 active:bg-slate-50 transition-colors"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1.5">
                   <span
                     className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${getTierBadge(
                       task.priorityTier
@@ -302,21 +302,45 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                   <span className="font-mono text-[10px] text-slate-400">{task.id}</span>
                 </div>
 
-                <span
-                  className={`text-[10px] font-medium px-2 py-0.5 rounded border ${getPriorityBadge(
-                    task.priority
-                  )}`}
-                >
-                  {task.priority}
-                </span>
+                <div className="flex items-center space-x-1.5">
+                  <span
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+                      task.deadlineStatus === "overdue" && task.status !== "Completed"
+                        ? "bg-rose-100 text-rose-700"
+                        : task.deadlineStatus === "due_today" && task.status !== "Completed"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {task.primaryReason}
+                  </span>
+                  <span
+                    className={`text-[10px] font-medium px-2 py-0.5 rounded border ${getPriorityBadge(
+                      task.priority
+                    )}`}
+                  >
+                    {task.priority}
+                  </span>
+                </div>
               </div>
 
-              <h4 className="text-sm font-semibold text-slate-900 leading-snug">{task.title}</h4>
+              <h4 className="text-xs sm:text-sm font-semibold text-slate-900 leading-snug line-clamp-2">
+                {task.title}
+              </h4>
 
-              <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-                <span>Assignee: {task.employeeName}</span>
+              <div className="flex items-center justify-between text-xs text-slate-500 pt-0.5">
+                <div className="flex items-center space-x-1.5 truncate mr-2">
+                  <div className="w-4 h-4 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-[8px] shrink-0">
+                    {task.employeeName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .slice(0, 2)}
+                  </div>
+                  <span className="truncate">{task.employeeName}</span>
+                </div>
                 <span
-                  className={`font-semibold ${
+                  className={`font-semibold shrink-0 ${
                     task.deadlineStatus === "overdue" && task.status !== "Completed"
                       ? "text-rose-600"
                       : "text-slate-600"
@@ -326,12 +350,12 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
                 <select
                   value={task.status}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => onStatusChange(task.id, e.target.value as TaskStatus)}
-                  className={`text-xs rounded border px-2 py-1 font-medium ${getStatusBadge(
+                  className={`text-xs rounded border px-2 py-1.5 font-medium flex-1 max-w-[140px] ${getStatusBadge(
                     task.status
                   )}`}
                 >
@@ -346,7 +370,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded"
+                  className="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1.5 rounded shrink-0"
                 >
                   Open Source <ExternalLink className="w-3 h-3 ml-1" />
                 </a>
@@ -357,7 +381,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
       </div>
 
       {/* Pagination Footer */}
-      <div className="px-4 py-3 border-t border-slate-200 bg-slate-50/75 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+      <div className="px-3 sm:px-4 py-3 border-t border-slate-200 bg-slate-50/75 flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 text-xs text-slate-600">
         <div className="flex items-center space-x-2">
           <span>Rows per page:</span>
           <select

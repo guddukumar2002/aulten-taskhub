@@ -25,27 +25,27 @@ export const SettingsView: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Scoring Engine Overview */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs">
-        <div className="flex items-center space-x-3 mb-2">
-          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-xs">
+        <div className="flex items-start sm:items-center space-x-3 mb-2">
+          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
             <Cpu className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-sm sm:text-base font-bold text-slate-900">
               Deterministic Prioritization Architecture
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-[11px] sm:text-xs text-slate-500">
               Mathematical scoring model calculating real-time urgency across CRM & Helpdesk tasks
             </p>
           </div>
         </div>
 
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+        <div className="mt-4 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table className="w-full text-left border-collapse text-xs min-w-[550px]">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider text-[10px] sm:text-[11px]">
                 <th className="py-2.5 px-3">Condition / Rule</th>
                 <th className="py-2.5 px-3">Point Weight</th>
                 <th className="py-2.5 px-3">Category</th>
@@ -71,11 +71,11 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Tier Breakdown */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 mb-3">Priority Tier Classification</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-xs">
+        <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-3">Priority Tier Classification</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
           {tiers.map((t) => (
-            <div key={t.tier} className="p-3.5 border border-slate-200 rounded-lg bg-slate-50/40">
+            <div key={t.tier} className="p-3 sm:p-3.5 border border-slate-200 rounded-lg bg-slate-50/40">
               <div className="flex items-center justify-between mb-2">
                 <span className={`text-xs font-bold px-2 py-0.5 rounded ${t.badge}`}>{t.tier}</span>
                 <span className="font-mono text-[11px] text-slate-500 font-semibold">
@@ -89,9 +89,9 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* System Information */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 mb-4">Platform Specifications</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-xs">
+        <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-3 sm:mb-4">Platform Specifications</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 text-xs">
           <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
             <span className="text-slate-400 block mb-1">Product</span>
             <span className="font-semibold text-slate-800">Aulten TaskHub Enterprise</span>

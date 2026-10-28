@@ -30,6 +30,7 @@ export function App() {
   // Navigation & Layout
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
   // Data States
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -270,6 +271,8 @@ export function App() {
         setActiveTab={setActiveTab}
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
+        isMobileOpen={isMobileSidebarOpen}
+        setIsMobileOpen={setIsMobileSidebarOpen}
         counts={tabCounts}
         activeEmployee={activeEmployeeObj}
         serviceHealth={serviceHealth}
@@ -277,8 +280,8 @@ export function App() {
 
       {/* Main Content Layout */}
       <div
-        className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out ${
-          isSidebarCollapsed ? "ml-16" : "ml-64"
+        className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out ml-0 ${
+          isSidebarCollapsed ? "md:ml-16" : "md:ml-64"
         }`}
       >
         {/* Top Navigation */}
@@ -294,15 +297,16 @@ export function App() {
           onRefresh={() => loadData(true)}
           tasks={tasks}
           onSelectTask={(task) => setSelectedTask(task)}
+          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
         />
 
         {/* Page Content */}
-        <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-3.5 sm:p-5 md:p-6 max-w-7xl w-full mx-auto space-y-4 sm:space-y-6">
           {/* Partial Failure Notification Banner */}
           {isPartialFailure && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between shadow-xs animate-fade-in">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-amber-100 text-amber-700">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-fade-in">
+              <div className="flex items-start sm:items-center space-x-3">
+                <div className="p-2 rounded-lg bg-amber-100 text-amber-700 shrink-0">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
@@ -322,7 +326,7 @@ export function App() {
                   setSimulateError(null);
                   loadData(true);
                 }}
-                className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
+                className="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
               >
                 Restore Connection
               </button>
@@ -387,18 +391,18 @@ export function App() {
 
                   {/* Quick Action Preview Table */}
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                       <div>
-                        <h3 className="text-sm font-bold text-slate-900">
+                        <h3 className="text-xs sm:text-sm font-bold text-slate-900">
                           Top Priority Work Backlog
                         </h3>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-[11px] sm:text-xs text-slate-500">
                           Ranked by deterministic urgency score (Overdue + Deadline Proximity + Severity)
                         </p>
                       </div>
                       <button
                         onClick={() => setActiveTab("all")}
-                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 text-left sm:text-right"
                       >
                         View All Tasks ({tasks.length}) →
                       </button>

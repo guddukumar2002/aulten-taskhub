@@ -52,26 +52,26 @@ export const ChartsOverview: React.FC<ChartsOverviewProps> = ({ analytics }) => 
       ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
       {/* Status Distribution Donut */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white border border-slate-200 rounded-xl p-3.5 sm:p-5 shadow-xs">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Work Status Breakdown</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Distribution across lifecycle stages</p>
+            <h3 className="text-xs sm:text-sm font-semibold text-slate-900">Work Status Breakdown</h3>
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Distribution across stages</p>
           </div>
-          <span className="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+          <span className="text-[10px] sm:text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md shrink-0">
             {analytics.activeTasks} Active
           </span>
         </div>
 
-        <div className="h-56 w-full flex items-center justify-center">
+        <div className="h-48 sm:h-56 w-full flex items-center justify-center">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={statusData}
-                innerRadius={55}
-                outerRadius={80}
+                innerRadius={48}
+                outerRadius={72}
                 paddingAngle={4}
                 dataKey="value"
               >
@@ -96,11 +96,11 @@ export const ChartsOverview: React.FC<ChartsOverviewProps> = ({ analytics }) => 
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-4 mt-2 pt-3 border-t border-slate-100">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-2 pt-3 border-t border-slate-100 text-[11px] sm:text-xs text-slate-600">
           {statusData.map((item) => (
-            <div key={item.name} className="flex items-center space-x-1.5 text-xs text-slate-600">
+            <div key={item.name} className="flex items-center space-x-1 sm:space-x-1.5">
               <span
-                className="w-2.5 h-2.5 rounded-full"
+                className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: STATUS_COLORS[item.name] || item.color }}
               />
               <span className="font-medium">{item.name}</span>
@@ -111,22 +111,22 @@ export const ChartsOverview: React.FC<ChartsOverviewProps> = ({ analytics }) => 
       </div>
 
       {/* Priority Breakdown Bar Chart */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white border border-slate-200 rounded-xl p-3.5 sm:p-5 shadow-xs">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Priority Volume</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Tasks categorised by urgency level</p>
+            <h3 className="text-xs sm:text-sm font-semibold text-slate-900">Priority Volume</h3>
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Tasks by urgency tier</p>
           </div>
-          <span className="text-xs font-semibold px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-md">
+          <span className="text-[10px] sm:text-xs font-semibold px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-md shrink-0">
             {analytics.urgent} Critical
           </span>
         </div>
 
-        <div className="h-56 w-full">
+        <div className="h-48 sm:h-56 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={priorityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+            <BarChart data={priorityData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "#ffffff",
@@ -149,11 +149,11 @@ export const ChartsOverview: React.FC<ChartsOverviewProps> = ({ analytics }) => 
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-4 mt-2 pt-3 border-t border-slate-100">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-2 pt-3 border-t border-slate-100 text-[11px] sm:text-xs text-slate-600">
           {priorityData.map((item) => (
-            <div key={item.name} className="flex items-center space-x-1.5 text-xs text-slate-600">
+            <div key={item.name} className="flex items-center space-x-1 sm:space-x-1.5">
               <span
-                className="w-2.5 h-2.5 rounded-full"
+                className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: PRIORITY_COLORS[item.name] || item.color }}
               />
               <span className="font-medium">{item.name}</span>
