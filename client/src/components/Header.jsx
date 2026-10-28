@@ -5,8 +5,7 @@ import {
   RefreshCw, 
   Users, 
   Clock,
-  Menu,
-  X
+  BookOpen
 } from "lucide-react";
 
 export function Header({
@@ -15,10 +14,10 @@ export function Header({
   selectedEmployee,
   onSelectEmployee,
   onRefresh,
-  isLoading
+  isLoading,
+  onOpenDocsModal
 }) {
   const [currentTime, setCurrentTime] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -93,7 +92,7 @@ export function Header({
             )}
           </div>
 
-          {/* Right Action: Employee Filter & Refresh */}
+          {/* Right Action: Employee Filter, System Docs, Refresh */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             
             {/* Employee Selector */}
@@ -123,6 +122,16 @@ export function Header({
                 ))}
               </select>
             </div>
+
+            {/* System Docs Button */}
+            <button
+              onClick={onOpenDocsModal}
+              title="View Architecture & Pipeline Specs"
+              className="hidden sm:flex items-center space-x-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-white/[0.08] transition shadow-sm"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Docs</span>
+            </button>
 
             {/* Refresh Button */}
             <button

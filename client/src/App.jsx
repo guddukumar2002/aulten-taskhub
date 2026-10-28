@@ -9,6 +9,7 @@ import { TaskCardView } from "./components/TaskCardView";
 import { PriorityMatrixView } from "./components/PriorityMatrixView";
 import { TaskDetailModal } from "./components/TaskDetailModal";
 import { MockSourcePortalModal } from "./components/MockSourcePortalModal";
+import { SystemDocsModal } from "./components/SystemDocsModal";
 import { ErrorBanner } from "./components/ErrorBanner";
 import { 
   fetchTasks, 
@@ -16,7 +17,7 @@ import {
   fetchAnalytics, 
   updateTaskStatus
 } from "./services/api";
-import { Sparkles, CheckCircle2 } from "lucide-react";
+import { Sparkles, CheckCircle2, BookOpen } from "lucide-react";
 
 export function App() {
   // Data States
@@ -46,6 +47,7 @@ export function App() {
   // Modal States
   const [detailModalTask, setDetailModalTask] = useState(null);
   const [sourceModalTask, setSourceModalTask] = useState(null);
+  const [isDocsOpen, setIsDocsOpen] = useState(false);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -78,7 +80,7 @@ export function App() {
       setEmployees(empRes || []);
 
       if (taskRes.isTotalFailure) {
-        setErrorMessage("Both CRM and Helpdesk mock services failed to respond.");
+        setErrorMessage("Both CRM and Helpdesk services failed to respond.");
       }
     } catch (err) {
       console.error("loadData error:", err);
@@ -158,6 +160,7 @@ export function App() {
         onSelectEmployee={setSelectedEmployee}
         onRefresh={() => loadData(true)}
         isLoading={isLoading || isRetrying}
+        onOpenDocsModal={() => setIsDocsOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -167,7 +170,7 @@ export function App() {
         <div className="rounded-3xl glass-panel-elevated p-5 sm:p-7 mb-6 border border-white/[0.08] relative overflow-hidden shadow-2xl">
           <div className="absolute -top-24 -right-24 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
           
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
                 <Sparkles className="w-3 h-3 text-indigo-400" />
@@ -181,11 +184,21 @@ export function App() {
               </p>
             </div>
 
-            <div className="text-right hidden sm:block">
-              <span className="text-xs text-slate-400 block font-medium">Total Active Tasks</span>
-              <span className="text-2xl font-extrabold text-white font-mono">
-                {analytics?.total || 0}
-              </span>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setIsDocsOpen(true)}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-white/[0.1] transition flex items-center space-x-1.5 shadow-sm"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Architecture Specs</span>
+              </button>
+
+              <div className="text-right hidden md:block pl-3 border-l border-white/[0.08]">
+                <span className="text-[11px] text-slate-400 block font-medium">Active Tasks</span>
+                <span className="text-xl font-extrabold text-white font-mono">
+                  {analytics?.total || 0}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -299,6 +312,12 @@ export function App() {
         <MockSourcePortalModal
           task={sourceModalTask}
           onClose={() => setSourceModalTask(null)}
+        />
+      )}
+
+      {isDocsOpen && (
+        <SystemDocsModal
+          onClose={() => setIsDocsOpen(false)}
         />
       )}
 
